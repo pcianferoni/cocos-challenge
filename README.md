@@ -25,7 +25,7 @@ Esto generará dos contenedores, una con postgres y la otra con la aplicación p
 La aplicación por defecto se levantará en el puerto establecido mediante la variable de entorno ```PORT```
 
 
-## Levantar localmente con DB dockerizada
+## Correr tests
 
 Para correr los tests ejecutar ```npm run test```
 
