@@ -18,6 +18,7 @@ import {
   ApiOperation,
   ApiBody,
   ApiParam,
+  ApiHeader,
 } from '@nestjs/swagger';
 
 import { UserId } from '../decorators/user-id.decorator';
@@ -32,9 +33,18 @@ export class OrderController {
     private readonly cancelLimitOrderUseCase: CancelLimitOrderUseCase,
   ) {}
   @Post()
-  @ApiResponse({ status: 201, description: 'Order created successfully' })
+  @ApiHeader({
+    name: 'userId',
+    description: 'Id of the user who will generate the order',
+    required: true,
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Order created successfully',
+    type: CreateOrderDto,
+  })
   @ApiResponse({ status: 400, description: 'Bad request' })
-  @ApiBody({ type: CreateBuyOrderUseCase })
+  @ApiBody({ type: CreateOrderDto })
   @ApiOperation({
     summary: 'Create an order',
     description:
@@ -63,6 +73,7 @@ export class OrderController {
   @Delete('/:id')
   @ApiResponse({ status: 201, description: 'Order created successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 404, description: 'Order not found' })
   @ApiParam({
     name: 'id',
     description: 'Order unique identifier',
@@ -73,7 +84,7 @@ export class OrderController {
     summary: 'Cancel an order',
     description: 'Cancel an limit type order with status "NEW"',
   })
-  async CancelOrder(@Param('id') id: string): Promise<any> {
-    return await this.cancelLimitOrderUseCase.execute(parseInt(id));
+  async CancelOrder(@Param('id') orderId: string): Promise<any> {
+    return await this.cancelLimitOrderUseCase.execute(parseInt(orderId));
   }
 }
