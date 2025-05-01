@@ -1,5 +1,5 @@
 import { PrismaService } from '@database/prisma-orm/prisma.service';
-import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import {
   Order,
   ORDER_SIDE,
@@ -49,7 +49,6 @@ export class OrderAdapter implements OrderPort {
 
       return orders.map((o) => new Order(o));
     } catch (error) {
-      this.logger.error('Error fetching orders by userId', error);
       throw new HttpException(error, HttpStatus.SERVICE_UNAVAILABLE);
     }
   }
@@ -66,7 +65,6 @@ export class OrderAdapter implements OrderPort {
       }
       return mapEntityToDomain(order);
     } catch (error) {
-      this.logger.error('Error fetching orders by userId', error);
       throw new HttpException(error, HttpStatus.SERVICE_UNAVAILABLE);
     }
   }
@@ -106,7 +104,6 @@ export class OrderAdapter implements OrderPort {
 
       return orders.map((o) => new Order(o));
     } catch (error) {
-      this.logger.error('Error fetching orders by instrument', error);
       throw new HttpException(error, HttpStatus.SERVICE_UNAVAILABLE);
     }
   }

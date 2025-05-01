@@ -20,6 +20,9 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 
+import { UserId } from '../decorators/user-id.decorator';
+import { CreateOrderDto } from '../dtos/create-order.dto';
+
 @ApiTags('Orders')
 @Controller('order')
 export class OrderController {
@@ -38,15 +41,18 @@ export class OrderController {
       'Create a new buy or sell order for the specified instruments.',
   })
   async createOrder(
-    @Body() createOrderDto: CreateBuyOrderDto | CreateSellOrderDto,
+    @Body() createOrderDto: CreateOrderDto,
+    @UserId() userId: number,
   ): Promise<any> {
     switch (createOrderDto.side) {
       case ORDER_SIDE.BUY:
         return await this.createBuyOrderUseCase.execute(
+          userId,
           createOrderDto as CreateBuyOrderDto,
         );
       case ORDER_SIDE.SELL:
         return await this.createSellOrderUseCase.execute(
+          userId,
           createOrderDto as CreateSellOrderDto,
         );
       default:

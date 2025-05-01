@@ -66,9 +66,8 @@ export const CreateBuyOrderSchema = z
     instrumentid: z.number(),
     side: z.nativeEnum(ORDER_SIDE),
     size: z.number().optional(),
-    price: z.number().optional(),
+    amount: z.number().optional(),
     type: z.nativeEnum(ORDER_TYPE),
-    userid: z.number(),
     isSizeBased: z.boolean(),
   })
   .superRefine((data, ctx) => {
@@ -77,15 +76,15 @@ export const CreateBuyOrderSchema = z
         ctx.addIssue({
           path: ['size'],
           code: z.ZodIssueCode.custom,
-          message: "Debe proporcionar 'size' cuando isSizeBased es true",
+          message: 'size is required when isSizeBased is true',
         });
       }
     } else {
-      if (data.price == null) {
+      if (data.amount == null) {
         ctx.addIssue({
-          path: ['price'],
+          path: ['amount'],
           code: z.ZodIssueCode.custom,
-          message: "Debe proporcionar 'price' cuando isSizeBased es false",
+          message: 'amount is required when isSizeBased is false',
         });
       }
     }
@@ -94,7 +93,6 @@ export const CreateBuyOrderSchema = z
 export const CreateSellOrderSchema = z.object({
   instrumentid: z.number(),
   side: z.nativeEnum(ORDER_SIDE),
-  size: z.number().optional(),
+  size: z.number(),
   type: z.nativeEnum(ORDER_TYPE),
-  userid: z.number(),
 });

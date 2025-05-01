@@ -60,6 +60,10 @@
     "typescript": "5.4.5"
   },
   "jest": {
+    "preset": "ts-jest",
+    "moduleNameMapper": {
+      "^@broker/(.*)$": "<rootDir>/broker/$1"
+    },
     "moduleFileExtensions": [
       "js",
       "json",

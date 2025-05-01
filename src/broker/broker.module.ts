@@ -12,6 +12,7 @@ import { GetPortfolioUseCase } from './application/get-portfolio/get-portfolio.u
 import { InstrumentAdapter } from './infrastructure/adapters/instrument.adapter';
 import { MarketDataAdapter } from './infrastructure/adapters/market-data.adapter';
 import { OrderAdapter } from './infrastructure/adapters/order.adapter';
+import { UserAdapter } from './infrastructure/adapters/user.adapter';
 import { InstrumentController } from './infrastructure/controllers/instrument.controller';
 import { OrderController } from './infrastructure/controllers/order.controller';
 import { PortfolioController } from './infrastructure/controllers/portfolio.controller';
@@ -36,6 +37,10 @@ import { PortfolioController } from './infrastructure/controllers/portfolio.cont
     {
       provide: 'MarketDataPort',
       useClass: MarketDataAdapter,
+    },
+    {
+      provide: 'UserPort',
+      useClass: UserAdapter,
     },
     {
       provide: APP_PIPE,

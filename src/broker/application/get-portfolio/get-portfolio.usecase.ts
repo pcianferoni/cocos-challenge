@@ -1,3 +1,4 @@
+import { UserPort } from '@broker/domain/ports/user.port';
 import { Injectable, Inject } from '@nestjs/common';
 
 import { Portfolio } from '../../domain/portfolio.domain';
@@ -16,33 +17,40 @@ export class GetPortfolioUseCase {
     private readonly orderPort: OrderPort,
     @Inject('MarketDataPort')
     private readonly marketDataPort: MarketDataPort,
+    @Inject('UserPort')
+    private readonly userPort: UserPort,
   ) {}
 
   async execute(userId: number): Promise<Portfolio> {
-    const orders = await this.orderPort.getOrdersByUserId(userId);
-    const availableCash = getAvailableCash(orders);
-    const instrumentIds = Array.from(
-      new Set(
-        orders
-          .filter((o) => o.isBuyOrSell() && o.isStatusFilled())
-          .map((o) => o.instrumentid),
-      ),
-    );
-    const marketData = await this.marketDataPort.getLastMarketData(
-      instrumentIds,
-    );
+    try {
+      await this.userPort.getUser(userId);
+      const orders = await this.orderPort.getOrdersByUserId(userId);
+      const availableCash = getAvailableCash(orders);
+      const instrumentIds = Array.from(
+        new Set(
+          orders
+            .filter((o) => o.isBuyOrSell() && o.isStatusFilled())
+            .map((o) => o.instrumentid),
+        ),
+      );
+      const marketData = await this.marketDataPort.getLastMarketData(
+        instrumentIds,
+      );
 
-    const assetsDetails = await calculateAssetYieldsFromOrders(
-      orders,
-      marketData,
-    );
+      const assetsDetails = await calculateAssetYieldsFromOrders(
+        orders,
+        marketData,
+      );
 
-    const assetsValue = getBalanceInAssets(assetsDetails);
+      const assetsValue = getBalanceInAssets(assetsDetails);
 
-    return new Portfolio(
-      availableCash,
-      availableCash + assetsValue,
-      assetsDetails,
-    );
+      return new Portfolio(
+        availableCash,
+        availableCash + assetsValue,
+        assetsDetails,
+      );
+    } catch (error) {
+      throw error;
+    }
   }
 }

@@ -1,17 +1,11 @@
-export interface IUser {
-  id: number;
-  email: string;
-  accountnumber: string;
-}
-
-export class User implements IUser {
+export class User {
   public id: number;
-  public email: string;
-  public accountnumber: string;
+  public email?: string;
+  public accountnumber?: string;
 
-  constructor(id: number, email: string, accountnumber: string) {
+  constructor(id: number, accountnumber?: string, email?: string) {
     this.id = id;
-    this.email = email;
     this.accountnumber = accountnumber;
+    this.email = email;
   }
 }

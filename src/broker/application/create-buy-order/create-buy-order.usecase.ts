@@ -21,8 +21,11 @@ export class CreateBuyOrderUseCase {
     private readonly marketDataPort: MarketDataPort,
   ) {}
 
-  async execute(request: CreateBuyOrderDto): Promise<{ message: string }> {
-    const { userid, instrumentid, price, size, type, isSizeBased } = request;
+  async execute(
+    userid,
+    request: CreateBuyOrderDto,
+  ): Promise<{ message: string }> {
+    const { instrumentid, amount, size, type, isSizeBased } = request;
 
     const orders = await this.orderPort.getOrdersByUserId(userid);
     const availableCash = getAvailableCash(orders);
@@ -38,8 +41,8 @@ export class CreateBuyOrderUseCase {
       finalSize = size;
       totalCost = finalSize * lastPrice;
     } else {
-      if (!price) throw new Error('Missing price for money-based order');
-      finalSize = Math.floor(price / lastPrice);
+      if (!amount) throw new Error('Missing price for money-based order');
+      finalSize = Math.floor(amount / lastPrice);
       if (finalSize <= 0) {
         throw new Error('Insufficient funds to buy at least 1 unit');
       }

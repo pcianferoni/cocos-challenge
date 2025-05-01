@@ -13,6 +13,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 
 @Injectable()
@@ -24,8 +25,11 @@ export class CreateSellOrderUseCase {
     private readonly marketDataPort: MarketDataPort,
   ) {}
 
-  async execute(request: CreateSellOrderDto): Promise<{ message: string }> {
-    const { instrumentid, userid, size, type } = request;
+  async execute(
+    userid,
+    request: CreateSellOrderDto,
+  ): Promise<{ message: string }> {
+    const { instrumentid, size, type } = request;
 
     try {
       const orders = await this.orderPort.getOrdersByInstrument(
@@ -33,15 +37,16 @@ export class CreateSellOrderUseCase {
         userid,
       );
 
+      if (!orders.length) throw new NotFoundException('Asset not found');
+
       const availableAssets = orders.reduce((acc, order) => {
         if (order.side === ORDER_SIDE.BUY) return acc + order.size;
         if (order.side === ORDER_SIDE.SELL) return acc - order.size;
         return acc;
       }, 0);
 
-      if (availableAssets < size!) {
+      if (availableAssets < size!)
         throw new BadRequestException('Insufficient assets to sell');
-      }
 
       const lastPrice = await this.marketDataPort.getLastPriceByInstrumentId(
         instrumentid,
@@ -54,7 +59,8 @@ export class CreateSellOrderUseCase {
         price: lastPrice,
         type,
         side: ORDER_SIDE.SELL,
-        status: ORDER_STATUS.FILLED,
+        status:
+          type === ORDER_TYPE.MARKET ? ORDER_STATUS.FILLED : ORDER_STATUS.NEW,
         datetime: new Date(),
       });
 
@@ -62,7 +68,7 @@ export class CreateSellOrderUseCase {
         userid,
         instrumentid: FIAT_ARS_INSTRUMENT_ID,
         // totalCost is equal ARS unit
-        size: lastPrice,
+        size: lastPrice * size,
         price: 1,
         type: ORDER_TYPE.MARKET,
         side: ORDER_SIDE.CASH_IN,
@@ -80,6 +86,7 @@ export class CreateSellOrderUseCase {
       };
     } catch (error) {
       if (error instanceof BadRequestException) throw error;
+      if (error instanceof NotFoundException) throw error;
       throw new InternalServerErrorException('Failed to process sell order');
     }
   }
