@@ -1,0 +1,134 @@
+{
+	"info": {
+		"_postman_id": "fc5dae14-868c-492c-93d1-37e5d3742c15",
+		"name": "Cocos challenge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44514711"
+	},
+	"item": [
+		{
+			"name": "/instruments",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/instrument",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"instrument"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "pes",
+							"disabled": true
+						},
+						{
+							"key": "ticker",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/portfolio",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/portfolio",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"portfolio"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/order",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"instrumentid\": 2,\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 1,\n  \"isSizeBased\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/order",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/order",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/order/:id",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"order",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "http://localhost:3000",
+			"type": "default"
+		}
+	]
+}
