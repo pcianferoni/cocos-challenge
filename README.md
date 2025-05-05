@@ -119,3 +119,7 @@ Esto será permitido siempre y cuando el usuario tenga la cantidad de activos di
 
 Se creará una order de `type=LIMIT` con `status=NEW` , con `side=BUY`o `side=SELL` y a la vez, se creará otra de `side=CASHOUT` (si es BUY) o `side=CASHIN` (si es venta). 
 Se podrá cancelar la orden mediante el endpoint `DELETE /order/:id` 
+
+
+
+Al levantar el proyecto, se podrá acceder al swagger en la ruta `/docs`.
